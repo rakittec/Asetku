@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title id="appTitle">AsetKu — Inventaris Rumah Tangga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+    <style>
+        /* ============================================================
+           RESET & VARIABEL — DENGAN ANIMASI PREMIUM
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        :root {
+            --bg-primary: #0b0e12;
+            --bg-secondary: #14181f;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.09);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f2f5;
+            --text-secondary: #a8b5c7;
+            --text-muted: #6a7f94;
+            --accent: #f97316;
+            --accent-dark: #ea580c;
+            --accent-glow: rgba(249, 115, 22, 0.35);
+            --accent-2: #3b82f6;
+            --accent-3: #22d3a7;
+            --shadow-glow: 0 0 60px rgba(249, 115, 22, 0.08);
+            --shadow-card: 0 12px 48px rgba(0, 0, 0, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --input-border: rgba(255, 255, 255, 0.08);
+            --input-focus-bg: rgba(255, 255, 255, 0.12);
+            --table-hover: rgba(255, 255, 255, 0.03);
+            --nav-bg: rgba(20, 24, 31, 0.85);
+            --modal-bg: #14181f;
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        body.light-mode {
+            --bg-primary: #f2f6fa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --border-glass: rgba(0, 0, 0, 0.06);
+            --text-primary: #0b1628;
+            --text-secondary: #2c3e50;
+            --text-muted: #5a7a9a;
+            --shadow-card: 0 12px 48px rgba(0, 0, 0, 0.05);
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --input-border: rgba(0, 0, 0, 0.08);
+            --input-focus-bg: #ffffff;
+            --table-hover: rgba(0, 0, 0, 0.02);
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --modal-bg: #ffffff;
+            --shadow-glow: 0 0 60px rgba(0, 0, 0, 0.02);
+        }
+
+        /* ----- TEMA LAINNYA (HI-TECH, ISLAMI, DLL) TETAP MENGGUNAKAN CSS SEBELUMNYA ----- */
+        body.theme-hitech { --accent: #00d4ff;
+            --accent-dark: #0ea5e9;
+            --accent-glow: rgba(0, 212, 255, 0.35); }
+        body.theme-islami { --accent: #2e7d32;
+            --accent-dark: #1b5e20;
+            --accent-glow: rgba(46, 125, 50, 0.35); }
+        body.theme-gaming { --accent: #a855f7;
+            --accent-dark: #7c3aed;
+            --accent-glow: rgba(168, 85, 247, 0.35); }
+        body.theme-moonlight { --accent: #60a5fa;
+            --accent-dark: #3b82f6;
+            --accent-glow: rgba(96, 165, 250, 0.35); }
+        body.theme-forest { --accent: #22c55e;
+            --accent-dark: #16a34a;
+            --accent-glow: rgba(34, 197, 94, 0.35); }
+        body.theme-sunset { --accent: #f43f5e;
+            --accent-dark: #e11d48;
+            --accent-glow: rgba(244, 63, 94, 0.35); }
+        body.theme-ocean { --accent: #0ea5e9;
+            --accent-dark: #0284c7;
+            --accent-glow: rgba(14, 165, 233, 0.35); }
+        body.theme-lavender { --accent: #a78bfa;
+            --accent-dark: #8b5cf6;
+            --accent-glow: rgba(167, 139, 250, 0.35); }
+        body.theme-monochrome { --accent: #94a3b8;
+            --accent-dark: #64748b;
+            --accent-glow: rgba(148, 163, 184, 0.2); }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.5s ease, color 0.5s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 16px var(--accent-glow); transition: background 0.3s; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+            transition: opacity 0.8s;
+        }
+        body.light-mode #particles-canvas { opacity: 0.15; }
+
+        /* ============================================================
+           NOTIFICATION — DENGAN BOUNCE
+           ============================================================ */
+        .notification-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+        .notification {
+            background: var(--modal-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-card), 0 0 40px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: notifSlideIn 0.6s var(--ease-spring) both;
+            pointer-events: auto;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-left: 4px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+            transform-origin: right center;
+        }
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .notification.success { border-left-color: var(--success); }
+        .notification.error { border-left-color: var(--danger); }
+        .notification.warning { border-left-color: var(--warning); }
+        .notification.info { border-left-color: var(--info); }
+        .notification .notif-icon { font-size: 20px; flex-shrink: 0; z-index: 1; }
+        .notification .notif-content { flex: 1; z-index: 1; }
+        .notification .notif-content .notif-title { font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 2px; }
+        .notification .notif-content .notif-message { font-size: 13px; color: var(--text-secondary); }
+        .notification .notif-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px;
+            border-radius: 30px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+        .notification .notif-close:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: rotate(90deg); }
+        @keyframes notifSlideIn {
+            0% { transform: translateX(120px) scale(0.8); opacity: 0; }
+            100% { transform: translateX(0) scale(1); opacity: 1; }
+        }
+        @keyframes notifSlideOut {
+            0% { transform: translateX(0) scale(1); opacity: 1; }
+            100% { transform: translateX(120px) scale(0.8); opacity: 0; }
+        }
+        .notification.removing { animation: notifSlideOut 0.4s var(--ease-smooth) forwards; }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            transition: background 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           NAVBAR — DENGAN GLOW & TRANSISI
+           ============================================================ */
+        .navbar {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 0 28px;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.3);
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .navbar .brand:hover { transform: scale(1.02); }
+        .navbar .brand .brand-glow { color: var(--accent); text-shadow: 0 0 40px var(--accent-glow); transition: text-shadow 0.3s; }
+        .navbar .brand i {
+            color: var(--accent);
+            font-size: 30px;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+            transition: transform 0.4s var(--ease-spring);
+        }
+        .navbar .brand:hover i { transform: rotate(-15deg) scale(1.1); }
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        .navbar .nav-links li a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s var(--ease-spring);
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+        .navbar .nav-links li a:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        .navbar .nav-links li a.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            box-shadow: inset 0 0 30px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(0);
+        }
+        .navbar .nav-links li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 30%;
+            width: 40%;
+            height: 2.5px;
+            background: var(--accent);
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--accent);
+            animation: navPulse 2s infinite;
+        }
+        @keyframes navPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .navbar .user-info .role-badge {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 4px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid var(--accent-glow);
+            transition: all 0.3s;
+        }
+        .navbar .user-info .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: all 0.3s var(--ease-spring);
+        }
+        .navbar .user-info .logout-btn:hover { background: var(--bg-card-hover); color: var(--accent); transform: rotate(360deg) scale(1.1); }
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: all 0.4s var(--ease-spring);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle:hover { background: var(--bg-card-hover); color: var(--accent); transform: rotate(60deg) scale(1.1); }
+
+        /* ============================================================
+           PAGE & STAGGERED ENTRIES
+           ============================================================ */
+        .page-container {
+            flex: 1;
+            padding: 32px 28px 48px;
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        .page {
+            display: none;
+            animation: pageIn 0.7s var(--ease-spring) both;
+        }
+        .page.active { display: block; }
+        @keyframes pageIn {
+            0% { opacity: 0; transform: translateY(30px) scale(0.96) blur(4px); }
+            100% { opacity: 1; transform: translateY(0) scale(1) blur(0); }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .page-header h2 i { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: iconFloat 4s ease-in-out infinite; }
+        @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .page-header .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* ============================================================
+           BUTTONS — DENGAN RIPPLE & GLOW
+           ============================================================ */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s var(--ease-spring);
+            text-decoration: none;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-glass);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), var(--accent-glow) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .btn:hover::after { opacity: 1; }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-card), 0 8px 30px var(--accent-glow);
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+        .btn:active:not(:disabled) { transform: scale(0.96); transition-duration: 0.1s; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 40px var(--accent-glow); background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
+        .btn-success {
+            background: linear-gradient(135deg, #0b8f6e, var(--accent-3));
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 20px rgba(34, 211, 167, 0.2);
+        }
+        .btn-success:hover:not(:disabled) { box-shadow: 0 8px 40px rgba(34, 211, 167, 0.35); }
+        .btn-danger {
+            background: linear-gradient(135deg, #b91c1c, var(--danger));
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 20px rgba(248, 113, 113, 0.2);
+        }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 8px 40px rgba(248, 113, 113, 0.35); }
+        .btn-warning {
+            background: linear-gradient(135deg, #d97706, var(--warning));
+            color: #0b0f1a;
+            border: none;
+        }
+        .btn-outline { background: transparent; border: 1px solid var(--border-glass); color: var(--text-secondary); }
+        .btn-outline:hover:not(:disabled) { background: var(--bg-card-hover); border-color: var(--accent); }
+        .btn-excel {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--accent-3);
+            border: 1px solid rgba(34, 197, 94, 0.12);
+        }
+        .btn-excel:hover:not(:disabled) { background: rgba(34, 197, 94, 0.2); }
+        .btn-sm { padding: 6px 16px; font-size: 12px; }
+        .btn-block { width: 100%; justify-content: center; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        /* ============================================================
+           FILTER BAR
+           ============================================================ */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s;
+        }
+        .filter-bar .search-box {
+            flex: 0 0 240px;
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 0 18px;
+            transition: all 0.3s;
+        }
+        .filter-bar .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--input-focus-bg);
+            transform: scale(1.02);
+        }
+        .filter-bar .search-box input {
+            border: none;
+            background: transparent;
+            padding: 10px 12px;
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+        }
+        .filter-bar .search-box input::placeholder { color: var(--text-muted); }
+        .filter-bar .search-box i { color: var(--text-muted); font-size: 16px; transition: color 0.3s; }
+        .filter-bar .search-box:focus-within i { color: var(--accent); }
+        .filter-bar .category-filters { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+        .filter-btn {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 40px;
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-spring);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .filter-btn i { font-size: 14px; }
+        .filter-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: translateY(-2px); }
+        .filter-btn.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(0);
+        }
+
+        /* ============================================================
+           DASHBOARD STATS — STAGGERED
+           ============================================================ */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .dashboard-stat {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 24px 26px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s var(--ease-spring);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            animation: statIn 0.6s var(--ease-spring) both;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .dashboard-stat:nth-child(1) { animation-delay: 0.05s; }
+        .dashboard-stat:nth-child(2) { animation-delay: 0.12s; }
+        .dashboard-stat:nth-child(3) { animation-delay: 0.19s; }
+        .dashboard-stat:nth-child(4) { animation-delay: 0.26s; }
+        @keyframes statIn { to { opacity: 1; transform: translateY(0); } }
+        .dashboard-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            opacity: 0.9;
+        }
+        .dashboard-stat::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 40%, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .dashboard-stat:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent-glow); box-shadow: var(--shadow-card), 0 0 60px var(--accent-glow); }
+        .dashboard-stat:hover::after { opacity: 0.5; }
+        .dashboard-stat .stat-icon { font-size: 32px; color: var(--accent); margin-bottom: 8px; display: inline-block; transition: transform 0.4s var(--ease-spring); }
+        .dashboard-stat:hover .stat-icon { transform: scale(1.15) rotate(-5deg); }
+        .dashboard-stat .stat-number { font-size: 34px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; position: relative; z-index: 1; }
+        .dashboard-stat .stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; position: relative; z-index: 1; }
+        .dashboard-stat .stat-change { font-size: 12px; font-weight: 600; margin-top: 8px; display: inline-block; padding: 2px 14px; border-radius: 40px; position: relative; z-index: 1; }
+        .dashboard-stat .stat-change.positive { color: var(--accent-3); background: rgba(34, 211, 167, 0.1); }
+        .dashboard-stat .stat-change.negative { color: var(--danger); background: rgba(248, 113, 113, 0.1); }
+        .dashboard-stat .stat-change.warning { color: var(--warning); background: rgba(251, 191, 36, 0.1); }
+
+        /* ============================================================
+           CHART CARDS
+           ============================================================ */
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 768px) { .dashboard-charts { grid-template-columns: 1fr; } }
+        .dashboard-chart-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 24px 26px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s var(--ease-spring);
+            animation: cardFade 0.8s var(--ease-smooth) both;
+            animation-delay: 0.2s;
+        }
+        @keyframes cardFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .dashboard-chart-card:hover { border-color: var(--accent-glow); transform: translateY(-4px); box-shadow: var(--shadow-card), 0 0 40px var(--accent-glow); }
+        .dashboard-chart-card h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .dashboard-chart-card h4 i { color: var(--accent); }
+        .dashboard-chart-card canvas { max-height: 250px; max-width: 100%; }
+
+        /* ============================================================
+           ALERTS
+           ============================================================ */
+        .dashboard-alerts {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 24px 26px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s;
+            animation: cardFade 0.8s var(--ease-smooth) both;
+            animation-delay: 0.35s;
+        }
+        .dashboard-alerts:hover { border-color: var(--accent-glow); }
+        .dashboard-alerts h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .dashboard-alerts h4 i { color: var(--warning); }
+        .dashboard-alerts .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-glass);
+            transition: all 0.3s;
+            border-radius: 8px;
+            padding-left: 8px;
+        }
+        .dashboard-alerts .alert-item:hover { background: var(--table-hover); transform: translateX(6px); }
+        .dashboard-alerts .alert-item:last-child { border-bottom: none; }
+        .dashboard-alerts .alert-item .alert-icon { font-size: 18px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.3s; }
+        .dashboard-alerts .alert-item:hover .alert-icon { transform: scale(1.1); }
+        .dashboard-alerts .alert-item .alert-icon.danger { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
+        .dashboard-alerts .alert-item .alert-icon.warning { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+        .dashboard-alerts .alert-item .alert-icon.info { background: var(--accent-glow); color: var(--accent); }
+        .dashboard-alerts .alert-item .alert-text { flex: 1; }
+        .dashboard-alerts .alert-item .alert-text .alert-title { font-weight: 500; color: var(--text-primary); font-size: 14px; }
+        .dashboard-alerts .alert-item .alert-text .alert-desc { font-size: 13px; color: var(--text-secondary); }
+
+        /* ============================================================
+           CHART SELECTOR
+           ============================================================ */
+        .chart-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: var(--bg-card);
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(12px);
+            animation: cardFade 0.6s both;
+            animation-delay: 0.05s;
+        }
+        .chart-selector .chart-opt {
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-spring);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chart-selector .chart-opt i { font-size: 14px; }
+        .chart-selector .chart-opt:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: translateY(-2px); }
+        .chart-selector .chart-opt.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        /* ============================================================
+           ASSET TABLE — DENGAN HOVER SLIDE
+           ============================================================ */
+        .asset-table-wrap {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 16px 16px 12px;
+            box-shadow: var(--shadow-card);
+            overflow-x: auto;
+            transition: all 0.4s;
+        }
+        .asset-table-wrap:hover { border-color: var(--accent-glow); }
+        .asset-table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 700px;
+        }
+        .asset-table-wrap table th {
+            background: var(--bg-card);
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-glass);
+            white-space: nowrap;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .asset-table-wrap table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-glass);
+            vertical-align: middle;
+            color: var(--text-secondary);
+            transition: all 0.25s;
+        }
+        .asset-table-wrap table tr {
+            transition: all 0.3s;
+        }
+        .asset-table-wrap table tr:hover td {
+            background: var(--table-hover);
+            color: var(--text-primary);
+        }
+        .asset-table-wrap table tr:hover {
+            transform: scale(1.005);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .asset-table-wrap .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+        .asset-table-wrap .no-assets { text-align: center; padding: 40px 0; color: var(--text-muted); font-style: italic; }
+
+        /* ============================================================
+           MARKETPLACE
+           ============================================================ */
+        .market-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 992px) { .market-grid { grid-template-columns: 1fr; } }
+        .market-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 24px 22px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s var(--ease-spring);
+            animation: cardFade 0.6s both;
+            animation-delay: 0.1s;
+        }
+        .market-card:hover { border-color: var(--accent-glow); transform: translateY(-6px); box-shadow: var(--shadow-card), 0 0 50px var(--accent-glow); }
+        .market-card h4 { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .market-card h4 i { color: var(--accent); }
+        .market-card .form-group { margin-bottom: 14px; }
+        .market-card .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+        .market-card .form-group select,
+        .market-card .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+            outline: none;
+        }
+        .market-card .form-group select:focus,
+        .market-card .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--input-focus-bg);
+            transform: scale(1.01);
+        }
+
+        .market-history {
+            margin-top: 28px;
+            animation: cardFade 0.6s both;
+            animation-delay: 0.2s;
+        }
+        .market-history .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-glass);
+            font-size: 13px;
+            transition: all 0.3s;
+            padding-left: 8px;
+            border-radius: 8px;
+        }
+        .market-history .history-item:hover { background: var(--table-hover); transform: translateX(6px); }
+        .market-history .history-item .h-type { font-weight: 600; padding: 2px 14px; border-radius: 40px; font-size: 11px; }
+        .market-history .history-item .h-type.buy { background: rgba(34, 211, 167, 0.1); color: var(--accent-3); }
+        .market-history .history-item .h-type.sell { background: rgba(248, 113, 113, 0.1); color: var(--danger); }
+
+        /* ============================================================
+           MODAL — DENGAN SCALE & BLUR
+           ============================================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(8, 11, 20, 0.6);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: modalFadeIn 0.4s var(--ease-smooth) both;
+        }
+        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body.light-mode .modal-overlay { background: rgba(255, 255, 255, 0.5); }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--modal-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 32px 36px 36px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-card), 0 0 80px var(--accent-glow);
+            animation: modalIn 0.5s var(--ease-spring) both;
+        }
+        @keyframes modalIn { from { transform: scale(0.9) translateY(40px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .modal .modal-header h3 { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+        .modal .modal-header .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s var(--ease-spring);
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal .modal-header .close-modal:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: rotate(90deg) scale(1.1); }
+        .modal .form-group { margin-bottom: 16px; }
+        .modal .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+            outline: none;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--input-focus-bg);
+            transform: scale(1.01);
+        }
+        .modal .form-group input::placeholder,
+        .modal .form-group textarea::placeholder { color: var(--text-muted); }
+        .modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 480px) { .modal .form-row { grid-template-columns: 1fr; } }
+
+        /* ============================================================
+           SETTINGS
+           ============================================================ */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+        .settings-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 24px 22px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s var(--ease-spring);
+            animation: cardFade 0.6s both;
+            animation-delay: 0.1s;
+        }
+        .settings-card:hover { border-color: var(--accent-glow); transform: translateY(-4px); box-shadow: var(--shadow-card), 0 0 40px var(--accent-glow); }
+        .settings-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .settings-card h4 i { color: var(--accent); }
+        .settings-card .form-group { margin-bottom: 14px; }
+        .settings-card .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+        .settings-card .form-group input,
+        .settings-card .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+            outline: none;
+        }
+        .settings-card .form-group input:focus,
+        .settings-card .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--input-focus-bg);
+        }
+        .settings-card .danger-zone {
+            border: 1px solid rgba(248, 113, 113, 0.15);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 14px;
+            background: rgba(248, 113, 113, 0.04);
+        }
+        .settings-card .danger-zone h5 { color: var(--danger); font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .settings-card .danger-zone p { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        .settings-card .danger-zone .btn-danger-zone {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-spring);
+        }
+        .settings-card .danger-zone .btn-danger-zone:hover:not(:disabled) { box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4); transform: scale(1.05); }
+
+        /* ============================================================
+           CATEGORY MANAGEMENT
+           ============================================================ */
+        .category-management-wrapper { display: flex; flex-direction: column; gap: 14px; }
+        .category-list-container { display: flex; flex-wrap: wrap; gap: 10px; padding: 4px 0; }
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 4px 14px 4px 18px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: all 0.3s var(--ease-spring);
+        }
+        .category-chip:hover { border-color: var(--accent); transform: scale(1.05); }
+        .category-chip .remove-cat {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 6px;
+            border-radius: 40px;
+            transition: all 0.3s;
+        }
+        .category-chip .remove-cat:hover { color: var(--danger); background: rgba(248, 113, 113, 0.1); transform: rotate(90deg); }
+        .category-add-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .category-add-row input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s;
+        }
+        .category-add-row input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: var(--input-focus-bg);
+        }
+
+        /* ============================================================
+           THEME GRID
+           ============================================================ */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .theme-grid .theme-opt {
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 2px solid var(--border-glass);
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-spring);
+            text-align: center;
+        }
+        .theme-grid .theme-opt:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: translateY(-3px); }
+        .theme-grid .theme-opt.active {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            color: var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: scale(1.02);
+        }
+        .theme-grid .theme-opt .dot {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+            border: 1px solid var(--border-glass);
+            transition: transform 0.3s;
+        }
+        .theme-grid .theme-opt:hover .dot { transform: scale(1.15); }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 992px) { .market-grid { grid-template-columns: 1fr; } .settings-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; min-height: 60px; gap: 6px; }
+            .navbar .brand { font-size: 18px; }
+            .navbar .nav-links { flex-wrap: wrap; gap: 2px; }
+            .navbar .nav-links li a { padding: 6px 14px; font-size: 12px; }
+            .navbar .nav-links li a span { display: none; }
+            .navbar .nav-links li a i { font-size: 18px; }
+            .page-container { padding: 16px 12px; }
+            .modal { padding: 24px 18px; margin: 10px; max-width: 100%; }
+            .filter-bar .search-box { flex: 1 1 100%; }
+            .filter-bar .category-filters { flex: 1 1 100%; justify-content: flex-start; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .dashboard-charts { grid-template-columns: 1fr; }
+            .asset-table-wrap table { min-width: 600px; }
+            .category-add-row { flex-direction: column; align-items: stretch; }
+            .chart-selector .chart-opt { font-size: 11px; padding: 4px 12px; }
+            .theme-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .filter-btn span { display: none; }
+            .filter-btn { padding: 6px 12px; }
+            .chart-selector .chart-opt span { display: none; }
+            .chart-selector .chart-opt i { font-size: 16px; }
+        }
+
+        /* ============================================================
+           UTILITY
+           ============================================================ */
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); font-size: 13px; }
+        .flex { display: flex; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .gap-8 { gap: 8px; }
+        .w-full { width: 100%; }
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+        .hidden { display: none !important; }
+
+        .receipt-print {
+            font-family: 'Courier New', monospace;
+            padding: 16px;
+            margin: 0 auto;
+            font-size: 12px;
+            background: #fff;
+            color: #111;
+            border-radius: 8px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            max-width: 80mm;
+        }
+        .receipt-container-print {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(8, 11, 20, 0.8);
+            backdrop-filter: blur(16px);
+            z-index: 9999;
+            padding: 20px;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: center;
+        }
+        body.light-mode .receipt-container-print { background: rgba(255, 255, 255, 0.7); }
+        .receipt-container-print.active { display: flex; }
+        @media print {
+            .receipt-container-print.active { display: flex !important; position: relative; padding: 0; background: #fff !important; backdrop-filter: none !important; }
+            .receipt-container-print .receipt-print { margin: 0 auto; box-shadow: none; }
+            .navbar, .page-header .actions, .no-print { display: none !important; }
+            .page-container { padding: 0 !important; max-width: 100% !important; }
+            .page { display: block !important; }
+            .modal-overlay { display: none !important; }
+            body { background: #fff !important; color: #111 !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== PARTICLES ===== -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- ===== NOTIFICATION ===== -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- ===== APP ===== -->
+    <div id="app">
+        <nav class="navbar" id="mainNav">
+            <div class="brand">
+                <i class="fas fa-home"></i>
+                <span><span class="brand-glow" id="brandAppName">Aset</span>Ku</span>
+            </div>
+            <ul class="nav-links">
+                <li><a class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></a></li>
+                <li><a data-page="assets"><i class="fas fa-boxes"></i> <span>Aset</span></a></li>
+                <li><a data-page="market"><i class="fas fa-handshake"></i> <span>Jual / Beli</span></a></li>
+                <li><a data-page="settings"><i class="fas fa-cog"></i> <span>Pengaturan</span></a></li>
+            </ul>
+            <div class="user-info">
+                <span id="userNameDisplay">Pemilik</span>
+                <span class="role-badge" id="userRoleBadge">Rumah</span>
+                <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="logout-btn" id="logoutBtn" title="Refresh Data"><i class="fas fa-sync"></i></button>
+            </div>
+        </nav>
+
+        <div class="page-container">
+            <!-- ===== DASHBOARD ===== -->
+            <div class="page active" id="page-dashboard">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-pie"></i> Dashboard Aset</h2>
+                    <div class="actions no-print">
+                        <button class="btn btn-outline btn-sm" onclick="refreshDashboard()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div class="dashboard-grid" id="dashboardStats">
+                    <div class="dashboard-stat"><span class="stat-icon"><i class="fas fa-cubes"></i></span><div class="stat-number" id="dashTotalAssets">0</div><div class="stat-label">Total Aset</div></div>
+                    <div class="dashboard-stat"><span class="stat-icon"><i class="fas fa-money-bill-wave"></i></span><div class="stat-number" id="dashTotalValue">Rp 0</div><div class="stat-label">Total Nilai</div></div>
+                    <div class="dashboard-stat"><span class="stat-icon"><i class="fas fa-tag"></i></span><div class="stat-number" id="dashAvgValue">Rp 0</div><div class="stat-label">Rata-rata</div></div>
+                    <div class="dashboard-stat"><span class="stat-icon"><i class="fas fa-exchange-alt"></i></span><div class="stat-number" id="dashTransactions">0</div><div class="stat-label">Transaksi</div></div>
+                </div>
+
+                <div class="chart-selector" id="chartSelector">
+                    <button class="chart-opt active" data-chart="bar"><i class="fas fa-chart-bar"></i> <span>Bar</span></button>
+                    <button class="chart-opt" data-chart="area"><i class="fas fa-chart-area"></i> <span>Area</span></button>
+                    <button class="chart-opt" data-chart="doughnut"><i class="fas fa-chart-pie"></i> <span>Doughnut</span></button>
+                    <button class="chart-opt" data-chart="radar"><i class="fas fa-chart-radar"></i> <span>Radar</span></button>
+                    <button class="chart-opt" data-chart="polar"><i class="fas fa-chart-line"></i> <span>Polar</span></button>
+                    <button class="chart-opt" data-chart="hbar"><i class="fas fa-chart-bar"></i> <span>H-Bar</span></button>
+                    <button class="chart-opt" data-chart="line"><i class="fas fa-chart-line"></i> <span>Line</span></button>
+                    <button class="chart-opt" data-chart="bubble"><i class="fas fa-circle"></i> <span>Bubble</span></button>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="dashboard-chart-card"><h4><i class="fas fa-chart-line" id="chartTypeIcon"></i> <span id="chartTypeLabel">Bar Chart</span></h4><canvas id="assetChartMain"></canvas></div>
+                    <div class="dashboard-chart-card"><h4><i class="fas fa-chart-doughnut"></i> Distribusi Kategori</h4><canvas id="assetDistChart"></canvas></div>
+                </div>
+
+                <div class="dashboard-alerts">
+                    <h4><i class="fas fa-bell"></i> Aktivitas Terbaru</h4>
+                    <div id="dashboardAlerts">
+                        <div class="alert-item"><div class="alert-icon info"><i class="fas fa-info-circle"></i></div><div class="alert-text"><div class="alert-title">Selamat datang di AsetKu</div><div class="alert-desc">Catat semua aset rumah tangga Anda dengan mudah.</div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ASSETS ===== -->
+            <div class="page" id="page-assets">
+                <div class="page-header">
+                    <h2><i class="fas fa-boxes"></i> Daftar Aset</h2>
+                    <div class="actions">
+                        <button class="btn btn-primary" id="addAssetBtn"><i class="fas fa-plus"></i> Tambah Aset</button>
+                        <button class="btn btn-excel" id="exportAssetsExcel"><i class="fas fa-file-excel"></i> Export Excel</button>
+                        <button class="btn btn-warning" id="importAssetsBtn"><i class="fas fa-file-import"></i> Import Excel</button>
+                    </div>
+                </div>
+                <div class="filter-bar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="assetSearch" placeholder="Cari aset..."></div>
+                    <div class="category-filters" id="categoryFilterContainer"></div>
+                </div>
+                <div class="asset-table-wrap">
+                    <table>
+                        <thead><tr><th>Kode</th><th>SN</th><th>Nama</th><th>Kategori</th><th>Harga Beli</th><th>Nilai Jual</th><th>Stok</th><th>Kondisi</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+                        <tbody id="assetTableBody"><tr><td colspan="10" class="no-assets">Belum ada aset. Tambahkan aset pertama!</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== MARKETPLACE ===== -->
+            <div class="page" id="page-market">
+                <div class="page-header">
+                    <h2><i class="fas fa-handshake"></i> Jual / Beli Aset</h2>
+                    <div class="actions no-print"><span class="role-indicator"><i class="fas fa-exchange-alt"></i> Marketplace</span></div>
+                </div>
+                <div class="market-grid">
+                    <div class="market-card">
+                        <h4><i class="fas fa-tag"></i> Jual Aset</h4>
+                        <div class="form-group"><label>Pilih Aset</label><select id="sellAssetSelect"><option value="">-- Pilih Aset --</option></select></div>
+                        <div class="form-group"><label>Harga Jual (Rp)</label><input type="number" id="sellPrice" placeholder="Harga jual" min="0"></div>
+                        <div class="form-group"><label>Pembeli</label><input type="text" id="sellBuyer" placeholder="Nama pembeli"></div>
+                        <button class="btn btn-danger w-full" id="sellAssetBtn"><i class="fas fa-arrow-right"></i> Jual Aset</button>
+                        <p style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center;">Aset akan dihapus dari inventaris setelah dijual.</p>
+                    </div>
+                    <div class="market-card">
+                        <h4><i class="fas fa-shopping-cart"></i> Beli Aset</h4>
+                        <div class="form-group"><label>Nama Aset</label><input type="text" id="buyName" placeholder="Nama aset"></div>
+                        <div class="form-group"><label>Kategori</label><select id="buyCategory"></select></div>
+                        <div class="form-group"><label>Harga Beli (Rp)</label><input type="number" id="buyPrice" placeholder="Harga beli" min="0"></div>
+                        <div class="form-group"><label>Nilai Jual Estimasi (Rp)</label><input type="number" id="buySellValue" placeholder="Nilai jual" min="0"></div>
+                        <div class="form-group"><label>Kondisi</label><select id="buyCondition"><option value="Baik">Baik</option><option value="Cukup">Cukup</option><option value="Kurang">Kurang</option></select></div>
+                        <button class="btn btn-success w-full" id="buyAssetBtn"><i class="fas fa-plus"></i> Tambah Aset</button>
+                    </div>
+                </div>
+                <div class="market-history"><h4 style="color:var(--text-primary);margin-bottom:12px;"><i class="fas fa-history"></i> Riwayat Transaksi</h4><div id="marketHistoryList"><div class="text-muted text-center" style="padding:20px 0;">Belum ada transaksi.</div></div></div>
+            </div>
+
+            <!-- ===== SETTINGS ===== -->
+            <div class="page" id="page-settings">
+                <div class="page-header"><h2><i class="fas fa-cog"></i> Pengaturan</h2></div>
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h4><i class="fas fa-palette"></i> Tampilan & Tema</h4>
+                        <div class="form-group"><label>Mode Warna</label><select id="setThemeMode"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+                        <div class="form-group"><label>Pilih Tema</label><div class="theme-grid" id="themeGrid">
+                            <div class="theme-opt active" data-theme="industrial"><span class="dot" style="background:#f97316;"></span> Industrial</div>
+                            <div class="theme-opt" data-theme="hitech"><span class="dot" style="background:#00d4ff;"></span> Hi-Tech</div>
+                            <div class="theme-opt" data-theme="islami"><span class="dot" style="background:#2e7d32;"></span> Islami</div>
+                            <div class="theme-opt" data-theme="gaming"><span class="dot" style="background:#a855f7;"></span> Gaming</div>
+                            <div class="theme-opt" data-theme="moonlight"><span class="dot" style="background:#60a5fa;"></span> Moonlight</div>
+                            <div class="theme-opt" data-theme="forest"><span class="dot" style="background:#22c55e;"></span> Forest</div>
+                            <div class="theme-opt" data-theme="sunset"><span class="dot" style="background:#f43f5e;"></span> Sunset</div>
+                            <div class="theme-opt" data-theme="ocean"><span class="dot" style="background:#0ea5e9;"></span> Ocean</div>
+                            <div class="theme-opt" data-theme="lavender"><span class="dot" style="background:#a78bfa;"></span> Lavender</div>
+                            <div class="theme-opt" data-theme="monochrome"><span class="dot" style="background:#94a3b8;"></span> Monochrome</div>
+                        </div></div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;"><button class="btn btn-outline btn-sm" onclick="previewTheme('dark')"><i class="fas fa-moon"></i> Dark</button><button class="btn btn-outline btn-sm" onclick="previewTheme('light')"><i class="fas fa-sun"></i> Light</button></div>
+                    </div>
+                    <div class="settings-card">
+                        <h4><i class="fas fa-edit"></i> Nama Aplikasi</h4>
+                        <div class="form-group"><label>Nama Aplikasi</label><input type="text" id="setAppName" placeholder="Misal: AsetKu" value="AsetKu"></div>
+                        <p style="font-size:12px;color:var(--text-muted);">Nama ini akan muncul di judul browser dan brand navbar.</p>
+                    </div>
+                    <div class="settings-card">
+                        <h4><i class="fas fa-tags"></i> Manajemen Kategori</h4>
+                        <div class="category-management-wrapper">
+                            <div><label style="font-size:13px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">Daftar Kategori</label><div class="category-list-container" id="categoryList"><span class="text-muted" style="font-size:13px;">Memuat...</span></div></div>
+                            <div class="category-add-row"><input type="text" id="newCategoryInput" placeholder="Nama kategori baru"><button class="btn btn-primary btn-sm" id="addCategoryBtn"><i class="fas fa-plus"></i> Tambah</button></div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Kategori yang dihapus akan diganti menjadi "lainnya" pada aset yang menggunakannya.</p>
+                        </div>
+                    </div>
+                    <div class="settings-card">
+                        <h4><i class="fas fa-database"></i> Data & Backup</h4>
+                        <div class="form-group"><label>Nama Pemilik</label><input type="text" id="setOwnerName" placeholder="Nama pemilik"></div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><button class="btn btn-primary btn-sm" id="exportDbBtn"><i class="fas fa-download"></i> Export Data (.cfg)</button><button class="btn btn-warning btn-sm" id="importDbBtn"><i class="fas fa-upload"></i> Import Data</button><input type="file" id="importDbInput" accept=".json,.cfg" style="display:none;"></div>
+                        <div class="danger-zone" style="margin-top:12px;"><h5><i class="fas fa-exclamation-triangle"></i> Reset Semua Data</h5><p>Hapus semua aset dan riwayat transaksi secara permanen.</p><button class="btn-danger-zone" id="resetAllDataBtn"><i class="fas fa-trash-alt"></i> Reset Semua Data</button></div>
+                    </div>
+                </div>
+                <div style="margin-top:16px;text-align:right;"><button class="btn btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> Simpan Pengaturan</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <div class="modal-header"><h3 id="modalTitle">Modal</h3><button class="close-modal" id="modalCloseBtn">&times;</button></div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ===== RECEIPT PRINT ===== -->
+    <div class="receipt-container-print" id="receiptContainerPrint">
+        <div id="receiptPrintContent"></div>
+        <button class="btn btn-primary" onclick="closeReceiptPrint()" style="position:fixed;top:10px;right:10px;z-index:10000;"><i class="fas fa-times"></i> Tutup</button>
+    </div>
+
+    <script>
+        // ======================================================================
+        // ASETKU — INVENTARIS RUMAH TANGGA SEDERHANA DENGAN ANIMASI PREMIUM
+        // ======================================================================
+
+        // ======================================================================
+        // 1. PARTICLES — DENGAN MOUSE LERP
+        // ======================================================================
+        (function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.4 + 0.1;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.y > canvas.height) this.y = 0;
+                    if (this.y < 0) this.y = canvas.height;
+
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = (120 - dist) / 120 * 0.2;
+                        this.x += Math.cos(angle) * force;
+                        this.y += Math.sin(angle) * force;
+                    }
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#f97316';
+                    ctx.fillStyle = accent + Math.round(this.opacity * 255).toString(16).padStart(2, '0');
+                    ctx.fill();
+                }
+            }
+            for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Smooth mouse lerp
+                mouse.x += (mouse.targetX - mouse.x) * 0.05;
+                mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#f97316';
+                            ctx.strokeStyle = accent + Math.round(0.06 * (1 - dist / 120) * 255).toString(16).padStart(2,
+                                '0');
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            canvas.addEventListener('mousemove', (e) => {
+                mouse.targetX = e.clientX;
+                mouse.targetY = e.clientY;
+            });
+            canvas.addEventListener('mouseleave', () => {
+                mouse.targetX = -1000;
+                mouse.targetY = -1000;
+            });
+        })();
+
+        // ======================================================================
+        // 2. DATA LAYER
+        // ======================================================================
+        const DB_KEY = 'asetku_db';
+        const THEME_KEY = 'asetku_theme';
+        const COLOR_THEME_KEY = 'asetku_color_theme';
+
+        function getDefaultDB() {
+            return {
+                assets: [],
+                transactions: [],
+                settings: {
+                    ownerName: 'Pemilik Rumah',
+                    appName: 'AsetKu',
+                    defaultTheme: 'dark',
+                    colorTheme: 'industrial',
+                    categories: ['elektronik', 'perabotan', 'kendaraan', 'peralatan', 'lainnya']
+                },
+                assetCounter: 0,
+                transactionCounter: 0
+            };
+        }
+
+        function loadDB() {
+            try {
+                const raw = localStorage.getItem(DB_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (!data.assets) data.assets = [];
+                    if (!data.transactions) data.transactions = [];
+                    if (!data.settings) data.settings = getDefaultDB().settings;
+                    if (!data.settings.appName) data.settings.appName = 'AsetKu';
+                    if (!data.settings.colorTheme) data.settings.colorTheme = 'industrial';
+                    if (!data.settings.categories || !Array.isArray(data.settings.categories) || data.settings.categories
+                        .length === 0) {
+                        data.settings.categories = getDefaultDB().settings.categories;
+                    }
+                    if (data.assetCounter === undefined) data.assetCounter = 0;
+                    if (data.transactionCounter === undefined) data.transactionCounter = 0;
+                    return data;
+                }
+            } catch (e) { console.error('Load DB error', e); }
+            return getDefaultDB();
+        }
+
+        function saveDB(data) {
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(data));
+                return true;
+            } catch (e) { console.error('Save DB error', e);
+                showNotification('Gagal menyimpan data!', 'error'); return false; }
+        }
+
+        let db = loadDB();
+
+        // ======================================================================
+        // 3. THEME & COLOR THEME
+        // ======================================================================
+        let currentTheme = localStorage.getItem(THEME_KEY) || db.settings.defaultTheme || 'dark';
+        let currentColorTheme = localStorage.getItem(COLOR_THEME_KEY) || db.settings.colorTheme || 'industrial';
+
+        function applyTheme(mode, colorTheme) {
+            document.body.classList.remove('light-mode', 'theme-hitech', 'theme-islami', 'theme-gaming', 'theme-moonlight',
+                'theme-forest', 'theme-sunset', 'theme-ocean', 'theme-lavender', 'theme-monochrome');
+            if (mode === 'light') document.body.classList.add('light-mode');
+            if (colorTheme && colorTheme !== 'industrial') {
+                document.body.classList.add('theme-' + colorTheme);
+            }
+            localStorage.setItem(THEME_KEY, mode);
+            localStorage.setItem(COLOR_THEME_KEY, colorTheme || 'industrial');
+            currentTheme = mode;
+            currentColorTheme = colorTheme || 'industrial';
+            document.getElementById('themeIcon').className = mode === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+            document.getElementById('setThemeMode').value = mode;
+            document.querySelectorAll('.theme-opt').forEach(el => {
+                el.classList.toggle('active', el.dataset.theme === (colorTheme || 'industrial'));
+            });
+            if (typeof renderMainChart === 'function') renderMainChart();
+            if (typeof renderDistChart === 'function') renderDistChart();
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const newMode = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newMode, currentColorTheme);
+        });
+
+        function previewTheme(mode) {
+            applyTheme(mode, currentColorTheme);
+        }
+
+        document.querySelectorAll('.theme-opt').forEach(el => {
+            el.addEventListener('click', function() {
+                const theme = this.dataset.theme;
+                document.querySelectorAll('.theme-opt').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                applyTheme(currentTheme, theme);
+            });
+        });
+
+        // ======================================================================
+        // 4. NOTIFICATION
+        // ======================================================================
+        function showNotification(message, type = 'info', title = '') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            const types = {
+                success: { icon: 'fa-check-circle', color: 'var(--success)' },
+                error: { icon: 'fa-exclamation-circle', color: 'var(--danger)' },
+                warning: { icon: 'fa-exclamation-triangle', color: 'var(--warning)' },
+                info: { icon: 'fa-info-circle', color: 'var(--info)' }
+            };
+            const config = types[type] || types.info;
+            const titles = { success: '✅ Berhasil', error: '❌ Gagal', warning: '⚠️ Peringatan', info: 'ℹ️ Informasi' };
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `
+                <span class="notif-icon" style="color:${config.color}"><i class="fas ${config.icon}"></i></span>
+                <div class="notif-content">
+                    <div class="notif-title">${title || titles[type] || 'Informasi'}</div>
+                    <div class="notif-message">${message}</div>
+                </div>
+                <button class="notif-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(notif);
+            setTimeout(() => {
+                if (notif.parentElement) {
+                    notif.classList.add('removing');
+                    setTimeout(() => { if (notif.parentElement) notif.remove(); }, 300);
+                }
+            }, 5000);
+        }
+
+        // ======================================================================
+        // 5. NAVIGATION
+        // ======================================================================
+        const navLinks = document.querySelectorAll('.nav-links a[data-page]');
+        const pages = {
+            dashboard: document.getElementById('page-dashboard'),
+            assets: document.getElementById('page-assets'),
+            market: document.getElementById('page-market'),
+            settings: document.getElementById('page-settings')
+        };
+
+        function navigateTo(page) {
+            navLinks.forEach(link => link.classList.toggle('active', link.dataset.page === page));
+            Object.keys(pages).forEach(key => {
+                const el = pages[key];
+                if (el) el.classList.toggle('active', key === page);
+            });
+            if (page === 'dashboard') renderDashboard();
+            if (page === 'assets') renderAssets();
+            if (page === 'market') renderMarket();
+            if (page === 'settings') { loadSettingsUI();
+                renderCategoryManagement(); }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(link.dataset.page);
+            });
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Refresh data?')) { location.reload(); }
+        });
+
+        // ======================================================================
+        // 6. UTILITY
+        // ======================================================================
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+
+        function generateId(prefix) { return prefix + '-' + Date.now().toString(36).toUpperCase() + Math.random().toString(
+            36).substr(2, 4).toUpperCase(); }
+
+        function getToday() { const d = new Date(); return d.toISOString().split('T')[0]; }
+
+        function formatDate(date) { return new Date(date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short',
+                year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+
+        // ======================================================================
+        // 7. CATEGORY HELPERS
+        // ======================================================================
+        function getCategories() {
+            return db.settings.categories || ['elektronik', 'perabotan', 'kendaraan', 'peralatan', 'lainnya'];
+        }
+
+        function getCategoryLabel(cat) {
+            const map = {
+                'elektronik': 'Elektronik',
+                'perabotan': 'Perabotan',
+                'kendaraan': 'Kendaraan',
+                'peralatan': 'Peralatan',
+                'lainnya': 'Lainnya'
+            };
+            return map[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+        }
+
+        // ======================================================================
+        // 8. DASHBOARD
+        // ======================================================================
+        let currentChartType = 'bar';
+        let mainChart = null;
+        let distChart = null;
+
+        function renderDashboard() {
+            const assets = db.assets;
+            const total = assets.length;
+            const totalValue = assets.reduce((sum, a) => sum + (a.purchasePrice || 0), 0);
+            const avgValue = total > 0 ? totalValue / total : 0;
+            const transactions = db.transactions.length;
+
+            document.getElementById('dashTotalAssets').textContent = total;
+            document.getElementById('dashTotalValue').textContent = 'Rp ' + formatNumber(totalValue);
+            document.getElementById('dashAvgValue').textContent = 'Rp ' + formatNumber(Math.round(avgValue));
+            document.getElementById('dashTransactions').textContent = transactions;
+
+            const alertsContainer = document.getElementById('dashboardAlerts');
+            let alertsHtml = '';
+            const latest = db.transactions.slice(-3).reverse();
+            if (latest.length > 0) {
+                latest.forEach(t => {
+                    const icon = t.type === 'buy' ? 'fa-arrow-down' : 'fa-arrow-up';
+                    const cls = t.type === 'buy' ? 'success' : 'danger';
+                    const label = t.type === 'buy' ? 'Beli' : 'Jual';
+                    alertsHtml += `
+                        <div class="alert-item">
+                            <div class="alert-icon ${cls}"><i class="fas ${icon}"></i></div>
+                            <div class="alert-text">
+                                <div class="alert-title">${label}: ${t.assetName}</div>
+                                <div class="alert-desc">Rp ${formatNumber(t.price)} — ${t.partner || '-'}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                alertsHtml += `
+                    <div class="alert-item">
+                        <div class="alert-icon info"><i class="fas fa-info-circle"></i></div>
+                        <div class="alert-text">
+                            <div class="alert-title">Total ${total} Aset</div>
+                            <div class="alert-desc">Nilai total Rp ${formatNumber(totalValue)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            alertsContainer.innerHTML = alertsHtml;
+
+            renderMainChart();
+            renderDistChart();
+        }
+
+        // ============================================================
+        // MAIN CHART
+        // ============================================================
+        function renderMainChart() {
+            const canvas = document.getElementById('assetChartMain');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const assets = db.assets;
+            const catValues = {};
+            const catCounts = {};
+            assets.forEach(a => {
+                const cat = a.category || 'lainnya';
+                catValues[cat] = (catValues[cat] || 0) + (a.purchasePrice || 0);
+                catCounts[cat] = (catCounts[cat] || 0) + 1;
+            });
+            const labels = Object.keys(catValues);
+            const data = Object.values(catValues);
+            const counts = Object.values(catCounts);
+
+            if (mainChart) mainChart.destroy();
+
+            const isDark = document.body.classList.contains('light-mode') ? false : true;
+            const textColor = isDark ? '#f0f2f5' : '#0b1628';
+            const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
+            const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#f97316';
+            const accentDark = getComputedStyle(document.body).getPropertyValue('--accent-dark').trim() || '#ea580c';
+            const colors = ['#f97316', '#3b82f6', '#22d3a7', '#fbbf24', '#f87171', '#a78bfa', '#f472b6'];
+            const chartLabels = labels.length ? labels.map(getCategoryLabel) : ['Belum Ada'];
+            const chartData = data.length ? data : [1];
+
+            let config = {};
+            const animDuration = 1400;
+            const animEasing = 'easeOutQuart';
+
+            switch (currentChartType) {
+                case 'bar':
+                    const grad = ctx.createLinearGradient(0, 0, 0, 250);
+                    grad.addColorStop(0, accentColor);
+                    grad.addColorStop(1, accentDark);
+                    config = {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ label: 'Total Nilai (Rp)', data: chartData, backgroundColor: chartData.map(
+                                    () => grad), borderColor: accentColor, borderWidth: 2, borderRadius: 8,
+                                barPercentage: 0.65 }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { labels: { color: textColor, font: { size: 12 } } } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: textColor, callback: v => 'Rp ' +
+                                        formatNumber(v) }, grid: { color: gridColor } },
+                                x: { ticks: { color: textColor, maxRotation: 30 }, grid: { color: gridColor } }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuart' }
+                        }
+                    };
+                    break;
+                case 'area':
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+                    gradient.addColorStop(0, accentColor + 'b3');
+                    gradient.addColorStop(0.6, accentColor + '66');
+                    gradient.addColorStop(1, accentColor + '1a');
+                    config = {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ label: 'Total Nilai (Rp)', data: chartData, borderColor: accentColor,
+                                backgroundColor: gradient, fill: true, tension: 0.4,
+                                pointBackgroundColor: accentColor, pointBorderColor: '#fff',
+                                pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 8, borderWidth: 3 }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { labels: { color: textColor, font: { size: 12 } } } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: textColor, callback: v => 'Rp ' +
+                                        formatNumber(v) }, grid: { color: gridColor } },
+                                x: { ticks: { color: textColor, maxRotation: 30 }, grid: { color: gridColor } }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuad' }
+                        }
+                    };
+                    break;
+                case 'doughnut':
+                    config = {
+                        type: 'doughnut',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ data: chartData, backgroundColor: colors.slice(0, chartLabels.length),
+                                borderColor: isDark ? '#14181f' : '#ffffff', borderWidth: 2 }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 },
+                                        padding: 12 } } },
+                            cutout: '55%',
+                            animation: { duration: animDuration, easing: 'easeOutQuart' }
+                        }
+                    };
+                    break;
+                case 'radar':
+                    config = {
+                        type: 'radar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: 'Total Nilai (Rp)',
+                                data: chartData.map(v => v / 10000),
+                                borderColor: accentColor,
+                                backgroundColor: accentColor + '33',
+                                pointBackgroundColor: accentColor,
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                            }, {
+                                label: 'Jumlah Aset',
+                                data: counts.length ? counts : [0],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 },
+                                        padding: 12 } } },
+                            scales: {
+                                r: {
+                                    ticks: { color: textColor, backdropColor: 'transparent' },
+                                    grid: { color: gridColor },
+                                    angleLines: { color: gridColor },
+                                    pointLabels: { color: textColor, font: { size: 11 } }
+                                }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuart' }
+                        }
+                    };
+                    break;
+                case 'polar':
+                    config = {
+                        type: 'polarArea',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ data: chartData, backgroundColor: colors.slice(0, chartLabels.length),
+                                borderColor: isDark ? '#14181f' : '#ffffff', borderWidth: 2 }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 },
+                                        padding: 12 } } },
+                            scales: { r: { ticks: { color: textColor, backdropColor: 'transparent' },
+                                    grid: { color: gridColor } } },
+                            animation: { duration: animDuration, easing: 'easeOutElastic' }
+                        }
+                    };
+                    break;
+                case 'hbar':
+                    config = {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ label: 'Total Nilai (Rp)', data: chartData, backgroundColor: chartData
+                                    .map((_, i) => colors[i % colors.length]), borderColor: isDark ?
+                                    '#14181f' : '#ffffff', borderWidth: 1, borderRadius: 6,
+                                barPercentage: 0.7 }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { labels: { color: textColor, font: { size: 12 } } } },
+                            scales: {
+                                x: { beginAtZero: true, ticks: { color: textColor, callback: v => 'Rp ' +
+                                        formatNumber(v) }, grid: { color: gridColor } },
+                                y: { ticks: { color: textColor }, grid: { color: gridColor } }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuart' }
+                        }
+                    };
+                    break;
+                case 'line':
+                    config = {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{ label: 'Total Nilai (Rp)', data: chartData, borderColor: accentColor,
+                                backgroundColor: 'transparent', borderWidth: 3, tension: 0.3,
+                                pointBackgroundColor: chartData.map((_, i) => colors[i % colors.length]),
+                                pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 6,
+                                pointHoverRadius: 9, fill: false }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { labels: { color: textColor, font: { size: 12 } } } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: textColor, callback: v => 'Rp ' +
+                                        formatNumber(v) }, grid: { color: gridColor } },
+                                x: { ticks: { color: textColor, maxRotation: 30 }, grid: { color: gridColor } }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuad' }
+                        }
+                    };
+                    break;
+                case 'bubble':
+                    const bubbleData = labels.map((label, i) => ({ x: getCategoryLabel(label), y: data[i] || 0,
+                        r: Math.sqrt((counts[i] || 1) * 2) + 3 }));
+                    config = {
+                        type: 'bubble',
+                        data: {
+                            datasets: [{ label: 'Nilai vs Jumlah', data: bubbleData, backgroundColor: colors
+                                    .slice(0, bubbleData.length), borderColor: isDark ? '#14181f' :
+                                    '#ffffff', borderWidth: 1 }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { labels: { color: textColor, font: { size: 12 } } } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: textColor, callback: v => 'Rp ' +
+                                        formatNumber(v) }, grid: { color: gridColor } },
+                                x: { ticks: { color: textColor, maxRotation: 30 }, grid: { color: gridColor } }
+                            },
+                            animation: { duration: animDuration, easing: 'easeOutQuart' }
+                        }
+                    };
+                    break;
+                default:
+                    config = { type: 'bar', data: { labels: chartLabels, datasets: [{ label: 'Total Nilai (Rp)',
+                                data: chartData, backgroundColor: accentColor }] },
+                        options: { responsive: true, maintainAspectRatio: true,
+                        animation: { duration: animDuration, easing: 'easeOutQuart' } } };
+            }
+
+            mainChart = new Chart(ctx, config);
+            const labelsMap = {
+                'bar': 'Bar Chart',
+                'area': 'Area Chart',
+                'doughnut': 'Doughnut Chart',
+                'radar': 'Radar Chart',
+                'polar': 'Polar Area',
+                'hbar': 'Horizontal Bar',
+                'line': 'Line Chart',
+                'bubble': 'Bubble Chart'
+            };
+            const iconsMap = {
+                'bar': 'fa-chart-bar',
+                'area': 'fa-chart-area',
+                'doughnut': 'fa-chart-pie',
+                'radar': 'fa-chart-radar',
+                'polar': 'fa-chart-line',
+                'hbar': 'fa-chart-bar',
+                'line': 'fa-chart-line',
+                'bubble': 'fa-circle'
+            };
+            document.getElementById('chartTypeLabel').textContent = labelsMap[currentChartType] || 'Bar Chart';
+            document.getElementById('chartTypeIcon').className = 'fas ' + (iconsMap[currentChartType] || 'fa-chart-bar');
+        }
+
+        // ============================================================
+        // DISTRIBUTION CHART
+        // ============================================================
+        function renderDistChart() {
+            const canvas = document.getElementById('assetDistChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const assets = db.assets;
+            const categories = {};
+            assets.forEach(a => {
+                const cat = a.category || 'lainnya';
+                categories[cat] = (categories[cat] || 0) + 1;
+            });
+            const labels = Object.keys(categories);
+            const data = Object.values(categories);
+
+            if (distChart) distChart.destroy();
+
+            const isDark = document.body.classList.contains('light-mode') ? false : true;
+            const textColor = isDark ? '#f0f2f5' : '#0b1628';
+            const colors = ['#f97316', '#3b82f6', '#22d3a7', '#fbbf24', '#f87171', '#a78bfa'];
+
+            distChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length ? labels.map(getCategoryLabel) : ['Belum Ada'],
+                    datasets: [{ data: data.length ? data : [1], backgroundColor: colors.slice(0, labels.length ||
+                            1), borderColor: isDark ? '#14181f' : '#ffffff', borderWidth: 2 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 },
+                                padding: 12 } } },
+                    cutout: '60%',
+                    animation: { duration: 1200, easing: 'easeOutQuart' }
+                }
+            });
+        }
+
+        document.querySelectorAll('.chart-opt').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chart-opt').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentChartType = this.dataset.chart;
+                renderMainChart();
+            });
+        });
+
+        window.refreshDashboard = function() { renderDashboard();
+            showNotification('Dashboard diperbarui!', 'success'); };
+
+        // ======================================================================
+        // 9. ASSETS
+        // ======================================================================
+        let assetFilter = 'all';
+        let assetSearchTerm = '';
+
+        function renderAssets() {
+            const tbody = document.getElementById('assetTableBody');
+            if (!tbody) return;
+            let assets = db.assets;
+            if (assetFilter !== 'all') assets = assets.filter(a => (a.category || 'lainnya') === assetFilter);
+            if (assetSearchTerm) {
+                const s = assetSearchTerm.toLowerCase();
+                assets = assets.filter(a => a.name.toLowerCase().includes(s) || (a.code || '').toLowerCase().includes(s) || (
+                    a.sn || '').toLowerCase().includes(s));
+            }
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="no-assets">Tidak ada aset.</td></tr>`;
+                return;
+            }
+            const conditionColors = { 'Baik': 'var(--accent-3)', 'Cukup': 'var(--warning)',
+            'Kurang': 'var(--danger)' };
+            tbody.innerHTML = assets.map(a => `
+                <tr>
+                    <td><strong>${a.code || '-'}</strong></td>
+                    <td>${a.sn || '-'}</td>
+                    <td>${a.name}</td>
+                    <td>${getCategoryLabel(a.category || 'lainnya')}</td>
+                    <td>Rp ${formatNumber(a.purchasePrice || 0)}</td>
+                    <td>Rp ${formatNumber(a.sellValue || 0)}</td>
+                    <td>${a.stock || 0}</td>
+                    <td style="color:${conditionColors[a.condition] || 'var(--text-secondary)'};">${a.condition || '-'}</td>
+                    <td>${a.dateIn ? formatDate(a.dateIn) : '-'}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="btn btn-primary btn-sm" onclick="editAsset('${a.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAsset('${a.id}')"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-warning btn-sm" onclick="quickSell('${a.id}')"><i class="fas fa-handshake"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updateSellDropdown();
+            renderCategoryFilters();
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilterContainer');
+            if (!container) return;
+            const categories = getCategories();
+            let html =
+                `<button class="filter-btn ${assetFilter === 'all' ? 'active' : ''}" data-filter="all"><i class="fas fa-th"></i> <span>Semua</span></button>`;
+            categories.forEach(cat => {
+                const label = getCategoryLabel(cat);
+                html +=
+                    `<button class="filter-btn ${assetFilter === cat ? 'active' : ''}" data-filter="${cat}"><i class="fas fa-tag"></i> <span>${label}</span></button>`;
+            });
+            container.innerHTML = html;
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    assetFilter = this.dataset.filter;
+                    renderAssets();
+                });
+            });
+        }
+
+        function updateSellDropdown() {
+            const sel = document.getElementById('sellAssetSelect');
+            if (!sel) return;
+            const current = sel.value;
+            sel.innerHTML = '<option value="">-- Pilih Aset --</option>';
+            db.assets.forEach(a => {
+                sel.innerHTML +=
+                    `<option value="${a.id}">${a.name} (Rp ${formatNumber(a.sellValue || a.purchasePrice || 0)})</option>`;
+            });
+            if (current && db.assets.some(a => a.id === current)) sel.value = current;
+        }
+
+        document.getElementById('assetSearch').addEventListener('input', function() {
+            assetSearchTerm = this.value;
+            renderAssets();
+        });
+
+        // ======================================================================
+        // 10. ADD / EDIT ASSET
+        // ======================================================================
+        let editingAssetId = null;
+
+        document.getElementById('addAssetBtn').addEventListener('click', function() {
+            editingAssetId = null;
+            showAssetModal();
+        });
+
+        function editAsset(id) {
+            editingAssetId = id;
+            const asset = db.assets.find(a => a.id === id);
+            if (asset) showAssetModal(asset);
+        }
+
+        function showAssetModal(asset) {
+            const isEdit = !!asset;
+            const categories = getCategories();
+            modalTitle.textContent = isEdit ? '✏️ Edit Aset' : '➕ Tambah Aset';
+            modalBody.innerHTML = `
+                <div class="form-group"><label>Nama Aset</label><input type="text" id="aName" value="${isEdit ? asset.name : ''}" placeholder="Nama aset"></div>
+                <div class="form-group"><label>ID / Serial Number (SN)</label><input type="text" id="aSn" value="${isEdit ? asset.sn || '' : ''}" placeholder="ID atau nomor seri"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Kategori</label>
+                        <select id="aCategory">${categories.map(c => `<option value="${c}" ${isEdit && asset.category===c?'selected':''}>${getCategoryLabel(c)}</option>`).join('')}</select>
+                    </div>
+                    <div class="form-group"><label>Kondisi</label>
+                        <select id="aCondition">
+                            <option value="Baik" ${isEdit && asset.condition==='Baik'?'selected':''}>Baik</option>
+                            <option value="Cukup" ${isEdit && asset.condition==='Cukup'?'selected':''}>Cukup</option>
+                            <option value="Kurang" ${isEdit && asset.condition==='Kurang'?'selected':''}>Kurang</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Harga Beli (Rp)</label><input type="number" id="aPurchase" value="${isEdit ? asset.purchasePrice : 0}" min="0"></div>
+                    <div class="form-group"><label>Nilai Jual Estimasi (Rp)</label><input type="number" id="aSellValue" value="${isEdit ? asset.sellValue : 0}" min="0"></div>
+                </div>
+                <div class="form-group"><label>Stok</label><input type="number" id="aStock" value="${isEdit ? asset.stock : 1}" min="1"></div>
+                <div class="form-group"><label>Tanggal Masuk</label><input type="date" id="aDate" value="${isEdit ? asset.dateIn : getToday()}"></div>
+                <button class="btn btn-primary w-full" id="saveAssetBtn" style="padding:12px;font-size:16px;margin-top:8px;">
+                    <i class="fas fa-save"></i> ${isEdit ? 'Update' : 'Simpan'}
+                </button>
+            `;
+            modalOverlay.classList.add('active');
+
+            document.getElementById('saveAssetBtn').addEventListener('click', function() {
+                const name = document.getElementById('aName').value.trim();
+                const sn = document.getElementById('aSn').value.trim();
+                const category = document.getElementById('aCategory').value;
+                const condition = document.getElementById('aCondition').value;
+                const purchasePrice = parseInt(document.getElementById('aPurchase').value) || 0;
+                const sellValue = parseInt(document.getElementById('aSellValue').value) || 0;
+                const stock = parseInt(document.getElementById('aStock').value) || 1;
+                const dateIn = document.getElementById('aDate').value;
+                if (!name) { showNotification('Nama aset harus diisi!', 'warning'); return; }
+                if (purchasePrice < 0 || sellValue < 0) { showNotification('Harga tidak valid!', 'warning'); return; }
+
+                if (isEdit) {
+                    const a = db.assets.find(x => x.id === asset.id);
+                    if (a) {
+                        a.name = name;
+                        a.sn = sn;
+                        a.category = category;
+                        a.condition = condition;
+                        a.purchasePrice = purchasePrice;
+                        a.sellValue = sellValue;
+                        a.stock = stock;
+                        a.dateIn = dateIn;
+                    }
+                    showNotification('Aset berhasil diupdate!', 'success');
+                } else {
+                    db.assetCounter++;
+                    const code = 'AST-' + String(db.assetCounter).padStart(4, '0');
+                    db.assets.push({
+                        id: generateId('AST'),
+                        code: code,
+                        sn: sn,
+                        name: name,
+                        category: category,
+                        condition: condition,
+                        purchasePrice: purchasePrice,
+                        sellValue: sellValue || purchasePrice,
+                        stock: stock,
+                        dateIn: dateIn || getToday()
+                    });
+                    showNotification('Aset berhasil ditambahkan!', 'success');
+                }
+                saveDB(db);
+                modalOverlay.classList.remove('active');
+                renderAssets();
+                renderDashboard();
+                updateSellDropdown();
+            });
+        }
+
+        function deleteAsset(id) {
+            if (!confirm('Hapus aset ini?')) return;
+            db.assets = db.assets.filter(a => a.id !== id);
+            saveDB(db);
+            renderAssets();
+            renderDashboard();
+            updateSellDropdown();
+            showNotification('Aset dihapus.', 'info');
+        }
+
+        // ======================================================================
+        // 11. MARKETPLACE
+        // ======================================================================
+        function renderMarket() {
+            updateSellDropdown();
+            populateBuyCategory();
+            renderHistory();
+        }
+
+        function populateBuyCategory() {
+            const sel = document.getElementById('buyCategory');
+            if (!sel) return;
+            const categories = getCategories();
+            sel.innerHTML = categories.map(c => `<option value="${c}">${getCategoryLabel(c)}</option>`).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('marketHistoryList');
+            if (!container) return;
+            const transactions = db.transactions.slice().reverse();
+            if (transactions.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center" style="padding:20px 0;">Belum ada transaksi.</div>`;
+                return;
+            }
+            container.innerHTML = transactions.map(t => `
+                <div class="history-item">
+                    <div>
+                        <span class="h-type ${t.type}">${t.type === 'buy' ? '⬆ BELI' : '⬇ JUAL'}</span>
+                        <strong style="color:var(--text-primary);margin-left:8px;">${t.assetName}</strong>
+                        <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">${t.partner || '-'}</span>
+                    </div>
+                    <div>
+                        <span style="color:var(--text-primary);font-weight:600;">Rp ${formatNumber(t.price)}</span>
+                        <span style="color:var(--text-muted);font-size:11px;margin-left:8px;">${formatDate(t.date)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('sellAssetBtn').addEventListener('click', function() {
+            const assetId = document.getElementById('sellAssetSelect').value;
+            const price = parseInt(document.getElementById('sellPrice').value) || 0;
+            const buyer = document.getElementById('sellBuyer').value.trim();
+            if (!assetId) { showNotification('Pilih aset terlebih dahulu!', 'warning'); return; }
+            if (price <= 0) { showNotification('Masukkan harga jual yang valid!', 'warning'); return; }
+            if (!buyer) { showNotification('Masukkan nama pembeli!', 'warning'); return; }
+
+            const asset = db.assets.find(a => a.id === assetId);
+            if (!asset) { showNotification('Aset tidak ditemukan!', 'error'); return; }
+
+            if (!confirm(`Jual "${asset.name}" seharga Rp ${formatNumber(price)} kepada ${buyer}?`)) return;
+
+            db.transactions.push({
+                id: generateId('TRX'),
+                type: 'sell',
+                assetId: asset.id,
+                assetName: asset.name,
+                price: price,
+                partner: buyer,
+                date: new Date().toISOString()
+            });
+            db.assets = db.assets.filter(a => a.id !== assetId);
+            saveDB(db);
+            renderAssets();
+            renderDashboard();
+            renderMarket();
+            document.getElementById('sellPrice').value = '';
+            document.getElementById('sellBuyer').value = '';
+            showNotification(`✅ Aset "${asset.name}" berhasil dijual!`, 'success');
+        });
+
+        document.getElementById('buyAssetBtn').addEventListener('click', function() {
+            const name = document.getElementById('buyName').value.trim();
+            const category = document.getElementById('buyCategory').value;
+            const price = parseInt(document.getElementById('buyPrice').value) || 0;
+            const sellValue = parseInt(document.getElementById('buySellValue').value) || 0;
+            const condition = document.getElementById('buyCondition').value;
+
+            if (!name) { showNotification('Nama aset harus diisi!', 'warning'); return; }
+            if (price <= 0) { showNotification('Harga beli harus diisi!', 'warning'); return; }
+
+            db.assetCounter++;
+            const code = 'AST-' + String(db.assetCounter).padStart(4, '0');
+            const newAsset = {
+                id: generateId('AST'),
+                code: code,
+                sn: '',
+                name: name,
+                category: category,
+                condition: condition,
+                purchasePrice: price,
+                sellValue: sellValue || price,
+                stock: 1,
+                dateIn: getToday()
+            };
+            db.assets.push(newAsset);
+            db.transactions.push({
+                id: generateId('TRX'),
+                type: 'buy',
+                assetId: newAsset.id,
+                assetName: name,
+                price: price,
+                partner: 'Pembelian',
+                date: new Date().toISOString()
+            });
+            saveDB(db);
+            renderAssets();
+            renderDashboard();
+            renderMarket();
+            document.getElementById('buyName').value = '';
+            document.getElementById('buyPrice').value = '';
+            document.getElementById('buySellValue').value = '';
+            showNotification(`✅ Aset "${name}" berhasil ditambahkan!`, 'success');
+        });
+
+        function quickSell(id) {
+            const asset = db.assets.find(a => a.id === id);
+            if (!asset) return;
+            document.getElementById('sellAssetSelect').value = id;
+            document.getElementById('sellPrice').value = asset.sellValue || asset.purchasePrice || 0;
+            document.getElementById('sellBuyer').value = '';
+            navigateTo('market');
+            showNotification('Lengkapi data penjualan di panel Jual Aset.', 'info');
+        }
+
+        // ======================================================================
+        // 12. SETTINGS & CATEGORY MANAGEMENT
+        // ======================================================================
+        function loadSettingsUI() {
+            const s = db.settings;
+            document.getElementById('setThemeMode').value = currentTheme;
+            document.getElementById('setOwnerName').value = s.ownerName || 'Pemilik Rumah';
+            document.getElementById('setAppName').value = s.appName || 'AsetKu';
+            updateAppName(s.appName || 'AsetKu');
+            document.querySelectorAll('.theme-opt').forEach(el => {
+                el.classList.toggle('active', el.dataset.theme === (currentColorTheme || 'industrial'));
+            });
+            renderCategoryManagement();
+        }
+
+        function updateAppName(name) {
+            document.title = name + ' — Inventaris Rumah Tangga';
+            document.getElementById('brandAppName').textContent = name;
+        }
+
+        function renderCategoryManagement() {
+            const container = document.getElementById('categoryList');
+            if (!container) return;
+            const categories = getCategories();
+            if (categories.length === 0) {
+                container.innerHTML = '<span class="text-muted" style="font-size:13px;">Belum ada kategori. Tambahkan!</span>';
+                return;
+            }
+            container.innerHTML = categories.map(cat => `
+                <span class="category-chip">
+                    ${getCategoryLabel(cat)}
+                    ${cat !== 'lainnya' ? `<button class="remove-cat" data-category="${cat}" title="Hapus kategori"><i class="fas fa-times"></i></button>` : ''}
+                </span>
+            `).join('');
+
+            container.querySelectorAll('.remove-cat').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cat = this.dataset.category;
+                    if (!confirm(`Hapus kategori "${getCategoryLabel(cat)}"? Aset dengan kategori ini akan diubah menjadi "lainnya".`))
+                        return;
+                    let cats = getCategories().filter(c => c !== cat);
+                    db.settings.categories = cats;
+                    db.assets.forEach(a => {
+                        if (a.category === cat) a.category = 'lainnya';
+                    });
+                    saveDB(db);
+                    renderCategoryManagement();
+                    renderAssets();
+                    renderDashboard();
+                    populateBuyCategory();
+                    renderCategoryFilters();
+                    showNotification(`Kategori "${getCategoryLabel(cat)}" dihapus.`, 'info');
+                });
+            });
+        }
+
+        document.getElementById('addCategoryBtn').addEventListener('click', function() {
+            const input = document.getElementById('newCategoryInput');
+            const val = input.value.trim().toLowerCase();
+            if (!val) { showNotification('Masukkan nama kategori!', 'warning'); return; }
+            const categories = getCategories();
+            if (categories.includes(val)) { showNotification('Kategori sudah ada!', 'warning'); return; }
+            categories.push(val);
+            db.settings.categories = categories;
+            saveDB(db);
+            input.value = '';
+            renderCategoryManagement();
+            renderAssets();
+            renderDashboard();
+            populateBuyCategory();
+            renderCategoryFilters();
+            showNotification(`Kategori "${getCategoryLabel(val)}" berhasil ditambahkan.`, 'success');
+        });
+
+        document.getElementById('saveSettingsBtn').addEventListener('click', function() {
+            const mode = document.getElementById('setThemeMode').value;
+            const colorTheme = currentColorTheme;
+            db.settings.defaultTheme = mode;
+            db.settings.colorTheme = colorTheme;
+            db.settings.ownerName = document.getElementById('setOwnerName').value.trim() || 'Pemilik Rumah';
+            const appName = document.getElementById('setAppName').value.trim() || 'AsetKu';
+            db.settings.appName = appName;
+            saveDB(db);
+            applyTheme(mode, colorTheme);
+            updateAppName(appName);
+            showNotification('Pengaturan berhasil disimpan!', 'success');
+        });
+
+        // ======================================================================
+        // 13. EXPORT / IMPORT
+        // ======================================================================
+        document.getElementById('exportAssetsExcel').addEventListener('click', function() {
+            if (db.assets.length === 0) { showNotification('Tidak ada aset untuk diexport.', 'info'); return; }
+            const data = db.assets.map(a => ({
+                'Kode': a.code || '',
+                'SN': a.sn || '',
+                'Nama Aset': a.name,
+                'Kategori': getCategoryLabel(a.category || 'lainnya'),
+                'Kondisi': a.condition || '',
+                'Harga Beli (Rp)': a.purchasePrice || 0,
+                'Nilai Jual (Rp)': a.sellValue || 0,
+                'Stok': a.stock || 0,
+                'Tanggal Masuk': a.dateIn || ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Aset');
+            ws['!cols'] = [{ wch: 12 }, { wch: 18 }, { wch: 35 }, { wch: 15 }, { wch: 12 }, { wch: 18 }, { wch: 18 },
+                { wch: 10 }, { wch: 15 }
+            ];
+            XLSX.writeFile(wb, `aset_${getToday()}.xlsx`);
+            showNotification('✅ File Excel berhasil diunduh!', 'success');
+        });
+
+        document.getElementById('importAssetsBtn').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xlsx,.xls';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = new Uint8Array(ev.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet);
+                        let imported = 0;
+                        const categories = getCategories();
+                        rows.forEach(row => {
+                            const name = (row['Nama Aset'] || row['nama aset'] || '').toString().trim();
+                            const sn = (row['SN'] || row['sn'] || '').toString().trim();
+                            let category = (row['Kategori'] || row['kategori'] || '').toString().trim()
+                            .toLowerCase();
+                            if (!categories.includes(category)) category = 'lainnya';
+                            const condition = (row['Kondisi'] || row['kondisi'] || '').toString().trim() ||
+                                'Baik';
+                            const purchasePrice = parseInt(row['Harga Beli (Rp)'] || row['harga beli'] || 0) ||
+                                0;
+                            const sellValue = parseInt(row['Nilai Jual (Rp)'] || row['nilai jual'] || 0) || 0;
+                            const stock = parseInt(row['Stok'] || row['stok'] || 0) || 1;
+                            const dateIn = (row['Tanggal Masuk'] || row['tanggal masuk'] || '').toString()
+                            .trim() || getToday();
+                            if (!name) return;
+                            db.assetCounter++;
+                            const code = 'AST-' + String(db.assetCounter).padStart(4, '0');
+                            db.assets.push({
+                                id: generateId('AST'),
+                                code: code,
+                                sn: sn,
+                                name: name,
+                                category: category,
+                                condition: condition,
+                                purchasePrice: purchasePrice,
+                                sellValue: sellValue || purchasePrice,
+                                stock: stock,
+                                dateIn: dateIn
+                            });
+                            imported++;
+                        });
+                        saveDB(db);
+                        renderAssets();
+                        renderDashboard();
+                        updateSellDropdown();
+                        showNotification(`✅ ${imported} aset berhasil diimport!`, 'success');
+                    } catch (err) { showNotification('Gagal import: ' + err.message, 'error'); }
+                };
+                reader.readAsArrayBuffer(file);
+            };
+            input.click();
+        });
+
+        document.getElementById('exportDbBtn').addEventListener('click', function() {
+            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `asetku_backup_${getToday()}.cfg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('✅ Data berhasil diexport!', 'success');
+        });
+
+        document.getElementById('importDbBtn').addEventListener('click', function() {
+            document.getElementById('importDbInput').click();
+        });
+
+        document.getElementById('importDbInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (!data.assets || !data.transactions || !data.settings) {
+                        showNotification('File tidak valid!', 'error');
+                        return;
+                    }
+                    if (!confirm('Data saat ini akan diganti. Lanjutkan?')) return;
+                    db = data;
+                    saveDB(db);
+                    renderAssets();
+                    renderDashboard();
+                    renderMarket();
+                    loadSettingsUI();
+                    updateSellDropdown();
+                    showNotification('✅ Data berhasil direstore!', 'success');
+                } catch (err) { showNotification('Gagal import: ' + err.message, 'error'); }
+            };
+            reader.readAsText(file);
+            this.value = '';
+        });
+
+        document.getElementById('resetAllDataBtn').addEventListener('click', function() {
+            if (!confirm('⚠️ PERINGATAN! Semua data akan dihapus permanen! Lanjutkan?')) return;
+            if (prompt('Ketik "RESET" untuk konfirmasi:') !== 'RESET') { showNotification('Reset dibatalkan.', 'info'); return; }
+            db = getDefaultDB();
+            saveDB(db);
+            renderAssets();
+            renderDashboard();
+            renderMarket();
+            loadSettingsUI();
+            updateSellDropdown();
+            showNotification('✅ Semua data berhasil direset!', 'success');
+        });
+
+        // ======================================================================
+        // 14. MODAL HELPERS
+        // ======================================================================
+        document.getElementById('modalCloseBtn').addEventListener('click', function() {
+            modalOverlay.classList.remove('active');
+        });
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') modalOverlay.classList.remove('active');
+        });
+
+        window.closeReceiptPrint = function() {
+            document.getElementById('receiptContainerPrint').classList.remove('active');
+            document.getElementById('receiptPrintContent').innerHTML = '';
+        };
+
+        // ======================================================================
+        // 15. INIT
+        // ======================================================================
+        (function init() {
+            const savedMode = localStorage.getItem(THEME_KEY) || db.settings.defaultTheme || 'dark';
+            const savedColor = localStorage.getItem(COLOR_THEME_KEY) || db.settings.colorTheme || 'industrial';
+            applyTheme(savedMode, savedColor);
+
+            document.getElementById('setOwnerName').value = db.settings.ownerName || 'Pemilik Rumah';
+            const appName = db.settings.appName || 'AsetKu';
+            document.getElementById('setAppName').value = appName;
+            updateAppName(appName);
+
+            renderDashboard();
+            renderAssets();
+            renderMarket();
+            updateSellDropdown();
+            populateBuyCategory();
+            renderCategoryManagement();
+
+            console.log('🏠 AsetKu — Inventaris Rumah Tangga');
+            console.log('📦 Total aset:', db.assets.length);
+            console.log('📋 Total transaksi:', db.transactions.length);
+            console.log('🎨 Theme:', currentTheme, '| Color:', currentColorTheme);
+            console.log('✨ Animasi premium aktif!');
+        })();
+    </script>
+</body>
+</html>
